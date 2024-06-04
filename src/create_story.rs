@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{story, StoryWindow};
+use crate::{StoryWindow, TextLine};
 
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)]
@@ -39,15 +39,18 @@ impl CreateStoryWindow {
         ui.label("스토리를 생성해보세요");
         ui.horizontal(|ui| {
           ui.label("제목:식별자");
-          ui.text_edit_singleline(&mut self.title);
+
+          TextLine::default().single(ui, &mut self.title);
         });
         ui.horizontal(|ui| {
           ui.label("설명");
-          ui.text_edit_singleline(&mut self.description);
+
+          TextLine::default().single(ui, &mut self.description);
         });
         ui.horizontal(|ui| {
           ui.label("내용");
-          ui.text_edit_multiline(&mut self.content);
+
+          TextLine::default().multi(ui, &mut self.content);
         });
 
         ui.with_layout(egui::Layout::bottom_up(egui::Align::Center), |ui| {
@@ -57,12 +60,7 @@ impl CreateStoryWindow {
               self.description.clone(),
               self.content.clone(),
             );
-            // let story = StoryWindow {
-            //   title: self.title.clone(),
-            //   description: self.description.clone(),
-            //   content: self.content.clone(),
-            //   is_open: true,
-            // };
+
             self.stories.insert(self.title.clone(), story);
 
             self.title.clear();

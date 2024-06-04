@@ -1,3 +1,5 @@
+use egui::{emath::TSTransform, Shape, Vec2};
+
 use crate::{CreateStoryWindow, StoryWindow};
 
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
@@ -73,27 +75,32 @@ impl eframe::App for StoryMakerApp {
         ui.separator();
 
         self.create_story_window.show(ui);
-        self.story_window.show(ui);
-
-        ui.checkbox(&mut self.settings, "🔧 Settings");
-
         if self.create_story_window.stories.len() > 0 {
           ui.separator();
 
           ui.collapsing("Stories", |ui| {
-            for (title, story) in self.create_story_window.stories.iter_mut() {
+            for (_, story) in self.create_story_window.stories.iter_mut() {
               if story.is_open {
                 story.update(ctx, _frame);
               }
-              if ui.button(title).clicked() {
+              if ui.button(story.title.clone()).clicked() {
                 story.is_open = !story.is_open;
               }
             }
           });
         }
+
+        ui.add_space(300.0);
+
+        ui.checkbox(&mut self.settings, "🔧 Settings");
       });
 
-    self.story_window.update(ctx, _frame);
+    egui::Shape::circle_filled(egui::Pos2 { x: 10., y: 10. }, 10., egui::Color32::RED).transform(
+      TSTransform {
+        scaling: 10.,
+        translation: Vec2 { x: 10., y: 100. },
+      },
+    );
     self.create_story_window.update(ctx, _frame);
 
     egui::Window::new("🔧 Settings")
